@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IndividualSportRegisterRepository  extends JpaRepository<IndividualSportRegister,Integer> {
-    boolean existsByEmailAndSport(String sapid, String sport);
+    boolean existsByEmailAndSport(String email, String sport);
 }
