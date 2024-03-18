@@ -18,4 +18,5 @@ public class IndividualSportRegister {
     private Integer id;
     private String email;
     private String sport;
+    private String gender;
 }
