@@ -28,6 +28,7 @@ public class Team {
 //    @JoinColumn(name = "team_id",referencedColumnName="id")
 //    private List<TeamMember> teamMembers;
 
-    @OneToMany(mappedBy = "teams")
-    private Set<TeamMember> members = new HashSet<>();
+    @OneToMany(targetEntity = TeamMember.class,cascade = CascadeType.ALL)
+    @JoinColumn(name = "teamId",referencedColumnName = "teamId")
+    private List<TeamMember> members = new ArrayList<>();
 }

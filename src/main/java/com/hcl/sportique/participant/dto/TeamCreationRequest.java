@@ -13,6 +13,6 @@ public class TeamCreationRequest {
 
     private String teamName;
     private String sports;
-    private Set<TeamMember> teamMemberList;
+    private List<TeamMemberDto> teamMemberList;
 
 }

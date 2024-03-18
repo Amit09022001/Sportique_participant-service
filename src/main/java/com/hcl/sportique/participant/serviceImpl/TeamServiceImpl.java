@@ -3,6 +3,7 @@ package com.hcl.sportique.participant.serviceImpl;
 import com.hcl.sportique.participant.Exception.DuplicateValueException;
 import com.hcl.sportique.participant.Exception.NullValueException;
 import com.hcl.sportique.participant.dto.TeamCreationRequest;
+import com.hcl.sportique.participant.dto.TeamMemberDto;
 import com.hcl.sportique.participant.entity.Team;
 import com.hcl.sportique.participant.entity.TeamMember;
 import com.hcl.sportique.participant.repository.TeamMemberRepository;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -23,41 +26,39 @@ public class TeamServiceImpl implements TeamService {
     private TeamMemberRepository teamMemberRepository;
 
 
-    public List<Team> getAllTeams(){
+    public List<Team> getAllTeams() {
 
         return teamRepository.findAll();
     }
 
 
-
-
-    private void validateEmail(Team team) throws Exception{
-
-
-        Set<TeamMember> teamMembers = team.getMembers();
-        if (teamMembers != null) {
-            for (TeamMember member : teamMembers) {
-                String email = member.getEmail();
-
-                if(email == null) {
-                    throw new NullValueException("TeamMembers email cannot be null or empty");
-                }
-
-            }
-        }
-    }
+//    private void validateEmail(Team team) throws Exception{
+//
+//
+//
+//        if (teamMembers != null) {
+//            for (TeamMember member : teamMembers) {
+//                String email = member.getEmail();
+//
+//                if(email == null) {
+//                    throw new NullValueException("TeamMembers email cannot be null or empty");
+//                }
+//
+//            }
+//        }
+//    }
 
     //Team Name unique for similar sport
     private void validateUniqueTeamNameForSport(Team team) throws Exception {
         String sport = team.getSport();
         String teamName = team.getTeamName();
-        if(teamName==null || teamName.length()==0) {
+        if (teamName == null || teamName.length() == 0) {
             throw new NullValueException("TeamName cannot be null or empty");
         }
-        if(sport==null || sport.length()==0) {
+        if (sport == null || sport.length() == 0) {
             throw new NullValueException("Sports name cannot be null or empty");
         }
-        if(teamRepository.existsByTeamNameAndSport(teamName,sport)) {
+        if (teamRepository.existsByTeamNameAndSport(teamName, sport)) {
             throw new DuplicateValueException("Team name must be unique for similar Sport");
         }
 
@@ -65,46 +66,52 @@ public class TeamServiceImpl implements TeamService {
     }
 
 
-
-
     @Transactional
     public Team createTeam(TeamCreationRequest request) throws Exception {
 
-        try {
-            Team team = new Team();
-            team.setTeamName(request.getTeamName());
-            team.setSport(request.getSports());
-            validateEmail(team);
-            validateUniqueTeamNameForSport(team);
-            team = teamRepository.save(team);
+        Team team = new Team();
 
-            for (TeamMember member : request.getTeamMemberList()) {
-                // Check if the member's email exists in the same sport for another team
 
-                List<Team> teamsWithSameSport = teamMemberRepository.findTeamsBySportAndEmail(request.getSports(), member.getEmail());
-                if (!teamsWithSameSport.isEmpty()) {
-                    throw new IllegalArgumentException("Error: Member with email " + member.getEmail() + " already registered for sport " + request.getSports() + " in another team.");
+        List<TeamMemberDto> players = request.getTeamMemberList();
+        List<TeamMember> updatedPlayers = new ArrayList<>();
+        if (players != null) {
+//                log.info("Player details is checking ...");
+            for (TeamMemberDto player : players) {
+
+
+                Optional<TeamMember> existingPlayer = teamMemberRepository.findByEmailAndSports(player.getEmail(), request.getSports());
+                if (existingPlayer.isPresent()) {
+                    System.out.println("Duplicate sports");
+                    throw new DuplicateValueException(String.format("Player with email %s is already registered with sports %s  !!.", player.getEmail(), request.getSports()));
+                } else {
+                    TeamMember player1 = TeamMember.builder()
+                            .email(player.getEmail().toLowerCase())
+                            .sports(request.getSports())
+                            .name(player.getName().toLowerCase())
+                            .gender(player.getGender().toLowerCase())
+
+
+                            .build();
+
+                    updatedPlayers.add(player1);
+//                        teamMemberRepository.save(player1);
+
                 }
 
-                TeamMember mem= new TeamMember();
-               mem.setName(member.getName());
-               mem.setEmail(member.getEmail());
-               mem.setGender(member.getGender());
-               mem.setTeams(team);
-               team.getMembers().add(mem);
-
-
-
-
-
-                teamMemberRepository.save(member);
             }
+            team.setTeamName(request.getTeamName());
+            team.setSport(request.getSports());
+            team.setMembers(updatedPlayers);
+            validateUniqueTeamNameForSport(team);
 
-            return team;
-        } catch (IllegalArgumentException e) {
-            // Log the error or handle it accordingly
-            throw new IllegalArgumentException("Error creating team: " + e.getMessage());
+            return teamRepository.save(team);
+
+
+        }else{
+            return null;
         }
+
+
     }
 
 }

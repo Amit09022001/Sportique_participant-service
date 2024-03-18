@@ -3,6 +3,7 @@ package com.hcl.sportique.participant.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class TeamMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,12 +24,13 @@ public class TeamMember {
     private String name;
     private String email;
     private String gender;
+    private String sports;
 
 
-    @ManyToOne
-    @JoinColumn(name = "team_id")
-    @JsonIgnore
-    private Team teams;
+//    @ManyToOne
+//    @JoinColumn(name = "team_id", referencedColumnName = "teamId")
+//    @JsonIgnore
+//    private Team teams;
 
 }
 
