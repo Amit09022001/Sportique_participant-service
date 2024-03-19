@@ -1,5 +1,7 @@
 package com.hcl.sportique.participant.controller;
 
+import com.hcl.sportique.participant.dto.IndividualMemberRequest;
+import com.hcl.sportique.participant.dto.TeamRequest;
 import com.hcl.sportique.participant.entity.IndividualSportRegister;
 import com.hcl.sportique.participant.service.IndividualSportRegisterService;
 import com.hcl.sportique.participant.serviceImpl.IndividualSportRegisterServiceImpl;
@@ -38,6 +40,17 @@ public class IndividualSportRegisterController {
     public ResponseEntity<List<IndividualSportRegister>> getAllRegistrations() {
         List<IndividualSportRegister> registrations = individualSportRegisterService.getAllRegistrations();
         return ResponseEntity.ok(registrations);
+    }
+
+    @GetMapping("/organization/{organizationId}/individualUser")
+    public ResponseEntity<?> getTeamsByOrganizationId(@PathVariable String organizationId){
+        List<IndividualMemberRequest> teamList = individualSportRegisterService.getMemberByOrganization(organizationId);
+        if(teamList.isEmpty()){
+            return  new ResponseEntity<>("Team id is not available", HttpStatus.BAD_REQUEST);
+        }else {
+
+            return new ResponseEntity<>(teamList, HttpStatus.OK);
+        }
     }
 
 

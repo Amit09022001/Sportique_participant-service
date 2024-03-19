@@ -4,6 +4,7 @@ import com.hcl.sportique.participant.Exception.DuplicateValueException;
 import com.hcl.sportique.participant.Exception.NullValueException;
 import com.hcl.sportique.participant.dto.TeamCreationRequest;
 import com.hcl.sportique.participant.dto.TeamMemberDto;
+import com.hcl.sportique.participant.dto.TeamRequest;
 import com.hcl.sportique.participant.entity.Team;
 import com.hcl.sportique.participant.entity.TeamMember;
 import com.hcl.sportique.participant.repository.TeamMemberRepository;
@@ -101,6 +102,7 @@ public class TeamServiceImpl implements TeamService {
             }
             team.setTeamName(request.getTeamName());
             team.setSport(request.getSports());
+            team.setOrganizationId(request.getOrganizationId());
             team.setMembers(updatedPlayers);
             validateUniqueTeamNameForSport(team);
 
@@ -114,4 +116,66 @@ public class TeamServiceImpl implements TeamService {
 
     }
 
+    public List<TeamRequest> lsitAllTeam(){
+        List<TeamRequest> teamCreationRequests = new ArrayList<>();
+        List<Team> teams = teamRepository.findAll();
+        teams.stream().forEach(listOfTeams ->{
+            TeamRequest getTeamList = new TeamRequest();
+
+            getTeamList.setTeamName(listOfTeams.getTeamName());
+            getTeamList.setSports(listOfTeams.getSport());
+
+
+           List<TeamMemberDto> teamMemberDtos = new ArrayList<>();
+           List<TeamMember> teamMembers = listOfTeams.getMembers();
+           teamMembers.stream().forEach(listMembers ->{
+               TeamMemberDto membersOfTeam = new TeamMemberDto();
+               membersOfTeam.setName(listMembers.getName());
+               membersOfTeam.setEmail(listMembers.getEmail());
+               membersOfTeam.setGender(listMembers.getGender());
+               teamMemberDtos.add(membersOfTeam);
+               System.out.println(teamMemberDtos.toString());
+           });
+           getTeamList.setTeamMemberList(teamMemberDtos);
+
+
+
+           teamCreationRequests.add(getTeamList);
+        });
+        return teamCreationRequests;
+    }
+
+    public List<TeamRequest> listOfTeamByOrganizationId(String organizationId){
+
+        List<Team> teamByOrganizationId = teamRepository.findByOrganizationId(organizationId);
+        List<TeamRequest> teamCreationRequests = new ArrayList<>();
+        teamByOrganizationId.stream().forEach(listOfTeams ->{
+            TeamRequest getTeamList = new TeamRequest();
+
+            getTeamList.setTeamName(listOfTeams.getTeamName());
+            getTeamList.setSports(listOfTeams.getSport());
+
+
+            List<TeamMemberDto> teamMemberDtos = new ArrayList<>();
+            List<TeamMember> teamMembers = listOfTeams.getMembers();
+            teamMembers.stream().forEach(listMembers ->{
+                TeamMemberDto membersOfTeam = new TeamMemberDto();
+                membersOfTeam.setName(listMembers.getName());
+                membersOfTeam.setEmail(listMembers.getEmail());
+                membersOfTeam.setGender(listMembers.getGender());
+                teamMemberDtos.add(membersOfTeam);
+                System.out.println(teamMemberDtos.toString());
+            });
+            getTeamList.setTeamMemberList(teamMemberDtos);
+
+
+
+            teamCreationRequests.add(getTeamList);
+        });
+
+
+        return teamCreationRequests;
+
+
+    }
 }

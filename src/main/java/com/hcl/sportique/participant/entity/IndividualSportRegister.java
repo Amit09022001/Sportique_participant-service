@@ -16,7 +16,9 @@ public class IndividualSportRegister {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private String name;
     private String email;
     private String sport;
     private String gender;
+    private String organizationId;
 }

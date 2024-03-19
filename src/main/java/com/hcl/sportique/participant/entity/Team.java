@@ -22,6 +22,7 @@ public class Team {
 
 
     private String sport;
+    private String organizationId;
 
 
 //    @OneToMany(cascade = CascadeType.ALL)
