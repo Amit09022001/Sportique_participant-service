@@ -1,6 +1,7 @@
 package com.hcl.sportique.participant.controller;
 
 import com.hcl.sportique.participant.dto.IndividualMemberRequest;
+import com.hcl.sportique.participant.dto.IndividualSportDto;
 import com.hcl.sportique.participant.dto.TeamRequest;
 import com.hcl.sportique.participant.entity.IndividualSportRegister;
 import com.hcl.sportique.participant.service.IndividualSportRegisterService;
@@ -52,6 +53,17 @@ public class IndividualSportRegisterController {
             return new ResponseEntity<>(teamList, HttpStatus.OK);
         }
     }
+
+    @GetMapping("/getAllSport/{email}")
+    public ResponseEntity<?> getSportNameByEmailId(@PathVariable String email){
+        IndividualSportDto dto=individualSportRegisterService.getAllSportByEmailId(email);
+        if(dto.getIndividualSport().isEmpty() || dto.getEmail().isEmpty()){
+            return new ResponseEntity<>("Data Not found!!",HttpStatus.NOT_FOUND);
+        }
+        else
+            return new ResponseEntity<>(dto,HttpStatus.OK);
+    }
+
 
 
 }

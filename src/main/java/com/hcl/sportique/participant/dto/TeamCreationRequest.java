@@ -15,6 +15,7 @@ public class TeamCreationRequest {
     private String sports;
     private List<TeamMemberDto> teamMemberList;
     private String organizationId;
+    private String captainEmail;
 
 
 }

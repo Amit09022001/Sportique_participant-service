@@ -19,10 +19,9 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer teamId;
     private String teamName;
-
-
     private String sport;
     private String organizationId;
+    private String captainEmail;
 
 
 //    @OneToMany(cascade = CascadeType.ALL)

@@ -2,6 +2,7 @@ package com.hcl.sportique.participant.serviceImpl;
 
 import com.hcl.sportique.participant.Exception.DuplicateValueException;
 import com.hcl.sportique.participant.Exception.NullValueException;
+import com.hcl.sportique.participant.dto.SportDto;
 import com.hcl.sportique.participant.dto.TeamCreationRequest;
 import com.hcl.sportique.participant.dto.TeamMemberDto;
 import com.hcl.sportique.participant.dto.TeamRequest;
@@ -103,6 +104,7 @@ public class TeamServiceImpl implements TeamService {
             team.setTeamName(request.getTeamName());
             team.setSport(request.getSports());
             team.setOrganizationId(request.getOrganizationId());
+            team.setCaptainEmail(request.getCaptainEmail());
             team.setMembers(updatedPlayers);
             validateUniqueTeamNameForSport(team);
 
@@ -177,5 +179,14 @@ public class TeamServiceImpl implements TeamService {
         return teamCreationRequests;
 
 
+    }
+
+    @Override
+    public SportDto getSportByCaptainEmail(String email) {
+        SportDto sportDto=new SportDto();
+        List<String> sportDetails=teamRepository.findSportByCaptainEmail(email);
+        sportDto.setCaptainEmail(email);
+        sportDto.setCaptainSport(sportDetails);
+        return sportDto;
     }
 }

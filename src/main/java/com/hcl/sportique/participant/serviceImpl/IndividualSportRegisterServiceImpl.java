@@ -1,6 +1,7 @@
 package com.hcl.sportique.participant.serviceImpl;
 
 import com.hcl.sportique.participant.dto.IndividualMemberRequest;
+import com.hcl.sportique.participant.dto.IndividualSportDto;
 import com.hcl.sportique.participant.entity.IndividualSportRegister;
 import com.hcl.sportique.participant.repository.IndividualSportRegisterRepository;
 import com.hcl.sportique.participant.service.IndividualSportRegisterService;
@@ -39,5 +40,14 @@ public class IndividualSportRegisterServiceImpl implements IndividualSportRegist
         });
 
         return singleMember;
+    }
+
+    @Override
+    public IndividualSportDto getAllSportByEmailId(String email) {
+        IndividualSportDto individualSportDto=new IndividualSportDto();
+        List<String> sportDataFromDatabase=registerRepository.findSportByEmail(email);
+        individualSportDto.setEmail(email);
+        individualSportDto.setIndividualSport(sportDataFromDatabase);
+        return individualSportDto;
     }
 }
